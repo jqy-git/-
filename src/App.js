@@ -1,24 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+import { Switch, Route, Redirect } from 'react-router-dom'
+import MyLayOut from './components/myLayout';
+import { layoutRoute } from './routes/routers'
+import { isLogined } from './utils/auth'
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+  return isLogined() ?
+   ( <div className="App">
+      <Switch>
+      <Route path="/main" render={routeProps => <MyLayOut {...routeProps} />} />
+        {layoutRoute.map(route => {
+          return <Route key={route.path} path={route.path} exact
+            render={routeProps => <route.component {...routeProps} />} ></Route>
+        })}
+        <Redirect to='/404' />
+      </Switch>
     </div>
+   ) : (
+    <Redirect to='/login' />
   );
 }
 
